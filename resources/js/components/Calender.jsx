@@ -1,11 +1,14 @@
-import { Fragment, useState } from "react";
+import axios from "axios";
+import { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 import { BackgroundColor, BorderColor, Color } from "../variables/Color";
 
 export const Calender = () => {
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [schedules, setSchedules] = useState([]);
 
+    // カレンダーを生成する
     const createCalender = (year, month) => {
         // 今月の初日
         const monthFirstDay = new Date(year, month - 1, 1).getDay();
@@ -17,6 +20,8 @@ export const Calender = () => {
             });
         });
     }
+
+    const calender = createCalender(year, month);
 
     // 日付を表示する
     const displayDay = (day) => {
@@ -34,8 +39,6 @@ export const Calender = () => {
         return day;
     }
 
-    const calender = createCalender(year, month);
-
     const onClick = (n) => {
         let newMonth = month + n;
 
@@ -50,6 +53,28 @@ export const Calender = () => {
         newMonth = newMonth % 12;
         setMonth(newMonth > 0 ? newMonth : 12);
     }
+
+    // 初回マウント時のみ実行する
+    useEffect(() => {
+        getSchedules();
+    }, []);
+
+    // APIからすべてのスケジュールを取得
+    const getSchedules = () => {
+        axios
+            .get('/api/schedules')
+            .then(res => {
+                setSchedules(res.data);
+            })
+            .catch(() => {
+                console.log('通信に失敗しました');
+            });
+    };
+
+    // ゼロパディング
+    const zeroPadding = (num) => {
+        return num.toString().padStart(2, "0");
+    };
 
     return (
         <Fragment>
@@ -82,7 +107,10 @@ export const Calender = () => {
                                             {displayDay(day)}
                                         </_Day>
                                         <_Schedule>
-
+                                            {schedules.map((schedule, index) => (
+                                                schedule.date === year + '-' + zeroPadding(month) + '-' + zeroPadding(day) &&
+                                                <_ScheduleTitle key={index} id={schedule.id}>{schedule.content}</_ScheduleTitle>
+                                            ))}
                                         </_Schedule>
                                     </div>
                                 </_Td>
@@ -168,7 +196,7 @@ const _Th = styled.th`
 const _Td = styled.td`
     border: 1px solid silver;
     padding: .3rem .3rem 1rem .3rem;
-    width: calc(100 / 7%);
+    width: calc(100% / 7);
 
     &:first-child {
         color: ${Color.Sunday};
@@ -184,8 +212,8 @@ const _Schedule = styled.div`
     height: 5rem;
 `
 const _ScheduleTitle = styled.div`
-    color: #fff;
-    background-color: #0075c2;
+    color: ${Color.ScheduleTitle};
+    background-color: ${BackgroundColor.ScheduleTitle};
     font-size: .8rem;
     border-radius: 3px;
     padding-left: .2rem;
