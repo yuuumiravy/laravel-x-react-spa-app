@@ -39,7 +39,7 @@ export const Calender = () => {
         return day;
     }
 
-    const onClick = (n) => {
+    const handleClick = (n) => {
         let newMonth = month + n;
 
         // 年を変更する
@@ -81,8 +81,8 @@ export const Calender = () => {
             <_Header>
                 <_Title>{`${year}年${month}月`}</_Title>
                 <_Nav>
-                    <_NavButton onClick={() => onClick(-1)}></_NavButton>
-                    <_NavButton onClick={() => onClick(+1)}></_NavButton>
+                    <_NavButton onClick={() => handleClick(-1)}></_NavButton>
+                    <_NavButton onClick={() => handleClick(+1)}></_NavButton>
                 </_Nav>
             </_Header>
             <_Table>
