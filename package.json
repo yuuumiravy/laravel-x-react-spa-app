@@ -13,6 +13,7 @@
         "vite-react-jsx": "^1.1.2"
     },
     "dependencies": {
+        "@mui/lab": "^5.0.0-alpha.92",
         "@mui/material": "^5.9.2",
         "@mui/styled-engine-sc": "^5.8.0",
         "react": "^18.2.0",
