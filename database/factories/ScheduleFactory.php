@@ -21,7 +21,8 @@ class ScheduleFactory extends Factory
             'date' => fake()->date(),
             'time' => fake()->time(),
             'category' => fake()->country(),
-            'content' => Str::random(10),
+            'title' => Str::random(10),
+            'content' => Str::random(20),
         ];
     }
 }
