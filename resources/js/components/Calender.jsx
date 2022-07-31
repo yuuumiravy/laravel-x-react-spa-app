@@ -2,11 +2,15 @@ import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 import { BackgroundColor, BorderColor, Color } from "../variables/Color";
+import { Register } from "./schedule/Register";
 
 export const Calender = () => {
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [date, setDate] = useState();
+    const [time, setTime] = useState(new Date);
     const [schedules, setSchedules] = useState([]);
+    const [addMemoPopupOpen, setAddMemoPopupOpen] = useState(false);
 
     // カレンダーを生成する
     const createCalender = (year, month) => {
@@ -53,6 +57,12 @@ export const Calender = () => {
         newMonth = newMonth % 12;
         setMonth(newMonth > 0 ? newMonth : 12);
     }
+
+    const handleClickSchedule = (year, month, day) => {
+        setDate(`${year}/${month}/${day}`);
+        setTime(new Date());
+        setAddMemoPopupOpen(true);
+    };
 
     // 初回マウント時のみ実行する
     useEffect(() => {
@@ -101,7 +111,11 @@ export const Calender = () => {
                     {calender.map((week, weekIndex) => (
                         <_Tr key={week.join('')}>
                             {week.map((day, dayIndex) => (
-                                <_Td key={`${weekIndex}${dayIndex}`} id={day}>
+                                <_Td
+                                    key={`${weekIndex}${dayIndex}`}
+                                    id={day}
+                                    onClick={() => handleClickSchedule(year, month, day)}
+                                >
                                     <div>
                                         <_Day>
                                             {displayDay(day)}
@@ -109,7 +123,7 @@ export const Calender = () => {
                                         <_Schedule>
                                             {schedules.map((schedule, index) => (
                                                 schedule.date === year + '-' + zeroPadding(month) + '-' + zeroPadding(day) &&
-                                                <_ScheduleTitle key={index} id={schedule.id}>{schedule.content}</_ScheduleTitle>
+                                                <_ScheduleTitle key={index} id={schedule.id}>{schedule.title}</_ScheduleTitle>
                                             ))}
                                         </_Schedule>
                                     </div>
@@ -119,6 +133,15 @@ export const Calender = () => {
                     ))}
                 </_Tbody>
             </_Table>
+            <Register
+                date={date}
+                setDate={setDate}
+                time={time}
+                setTime={setTime}
+                open={addMemoPopupOpen}
+                setOpen={setAddMemoPopupOpen}
+                getSchedules={getSchedules}
+            />
         </Fragment>
     );
 };
@@ -197,6 +220,10 @@ const _Td = styled.td`
     border: 1px solid silver;
     padding: .3rem .3rem 1rem .3rem;
     width: calc(100% / 7);
+
+    &:hover {
+        cursor: pointer;
+    }
 
     &:first-child {
         color: ${Color.Sunday};

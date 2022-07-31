@@ -1,0 +1,12 @@
+GET http://localhost/api/schedules/
+
+###
+
+POST http://localhost/api/schedules/craete/
+
+{
+    "date": "2022-07-25",
+    "time": "09:10:43",
+    "category": "sample",
+    "content": "contnet",
+}
